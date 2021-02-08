@@ -68,7 +68,13 @@
     <Compile Include="KeyInterceptorForm.Designer.cs">
       <DependentUpon>KeyInterceptorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="KeyPressListener.cs" />
+    <Compile Include="KeyReleasedEventArgs.cs" />
+    <Compile Include="LogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogForm.Designer.cs">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="KeyBindingForm.resx">
@@ -76,6 +82,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KeyInterceptorForm.resx">
       <DependentUpon>KeyInterceptorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogForm.resx">
+      <DependentUpon>LogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

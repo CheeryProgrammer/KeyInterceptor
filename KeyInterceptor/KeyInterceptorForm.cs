@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gma.System.MouseKeyHook;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,9 +10,15 @@ namespace KeyInterceptor
 	public partial class KeyInterceptorForm : Form
 	{
 		private ButtonView _selectedButton;
-		private KeyPressListener _keyListener;
 		private Dictionary<Keys, List<ButtonView>> _keyCodeToButtonViews = new Dictionary<Keys, List<ButtonView>>();
 		private ButtonFileStore _settings = new ButtonFileStore("settings.txt");
+		private LogForm _logForm;
+
+
+		public event KeyEventHandler KeyDown;
+		public event KeyEventHandler KeyUp;
+
+		private IKeyboardMouseEvents m_GlobalHook;
 
 		public KeyInterceptorForm()
 		{
@@ -20,9 +27,6 @@ namespace KeyInterceptor
 
 		private void KeyInterceptorForm_Load(object sender, EventArgs e)
 		{
-			_keyListener = new KeyPressListener();
-			_keyListener.KeyDown += PressButtonView;
-			_keyListener.KeyUp += ReleaseButtonView;
 			try
 			{
 				LoadButtons();
@@ -32,6 +36,13 @@ namespace KeyInterceptor
 				MessageBox.Show(this, $"Не удалось загрузить настройки: {ex.Message}{Environment.NewLine}" +
 					$"Файл настроек будет удален", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
+
+			LoadFormSettings();
+
+			Subscribe();
+
+			_logForm = new LogForm();
+			_logForm.Show();
 		}
 
 		private void LoadButtons()
@@ -47,15 +58,33 @@ namespace KeyInterceptor
 						_keyCodeToButtonViews.Add(buttonView.KeyCode.Value, new List<ButtonView> { buttonView });
 				}
 				buttonView.MouseDown += NewButton_MouseDown;
+				buttonView.KeyReleased += LogKey;
 				Controls.Add(buttonView);
 			}
+		}
+
+		public void Subscribe()
+		{
+			// Note: for the application hook, use the Hook.AppEvents() instead
+			m_GlobalHook = Hook.GlobalEvents();
+
+			m_GlobalHook.KeyDown += PressButtonView;
+			m_GlobalHook.KeyUp += ReleaseButtonView;
+		}
+
+		private void LogKey(object sender, KeyReleasedEventArgs e)
+		{
+			_logForm.BeginInvoke((Action)(()=>
+			{
+				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.fff}: {e.KeyCode} ({e.Duration} ms)");
+			}));
 		}
 
 		private void PressButtonView(object sender, KeyEventArgs e)
 		{
 			if (_keyCodeToButtonViews.TryGetValue(e.KeyCode, out List<ButtonView> views))
 			{
-				views.ForEach(btnView => btnView.BeginInvoke((Action)btnView.Press));
+				views.ForEach(btnView => btnView.Press());
 			}
 		}
 
@@ -63,7 +92,7 @@ namespace KeyInterceptor
 		{
 			if (_keyCodeToButtonViews.TryGetValue(e.KeyCode, out List<ButtonView> views))
 			{
-				views.ForEach(btnView => btnView.BeginInvoke((Action)btnView.UnPress));
+				views.ForEach(btnView => btnView.UnPress());
 			}
 		}
 
@@ -103,6 +132,7 @@ namespace KeyInterceptor
 		{
 			var newButton = new ButtonView();
 			newButton.MouseDown += NewButton_MouseDown;
+			newButton.KeyReleased += LogKey;
 			this.Controls.Add(newButton);
 		}
 
@@ -115,9 +145,9 @@ namespace KeyInterceptor
 		{
 			using (KeyBindingForm bindingForm = new KeyBindingForm())
 			{
-				_keyListener.KeyDown += bindingForm.RegisterButton;
+				m_GlobalHook.KeyDown += bindingForm.RegisterButton;
 				bindingForm.ShowDialog(this);
-				_keyListener.KeyDown += bindingForm.RegisterButton;
+				m_GlobalHook.KeyDown += bindingForm.RegisterButton;
 				if (bindingForm.DialogResult == DialogResult.OK)
 				{
 					if (_selectedButton.KeyCode.HasValue
@@ -141,12 +171,6 @@ namespace KeyInterceptor
 					}
 				}
 			}
-		}
-
-		private void KeyInterceptorForm_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			var buttons = Controls.OfType<ButtonView>();
-			_settings.Save(buttons);
 		}
 
 		private void ChangeViewImageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -195,6 +219,48 @@ namespace KeyInterceptor
 		{
 			this.Controls.Remove(_selectedButton);
 			_keyCodeToButtonViews.Values.ToList().ForEach(list => list.Remove(_selectedButton));
+		}
+
+		private void KeyInterceptorForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			_logForm.Close();
+
+			m_GlobalHook.KeyDown -= PressButtonView;
+			m_GlobalHook.KeyUp -= ReleaseButtonView;
+
+			//It is recommened to dispose it
+			m_GlobalHook.Dispose();
+
+			var buttons = Controls.OfType<ButtonView>();
+			_settings.Save(buttons);
+			SaveFormSettings();
+		}
+
+		private void SaveFormSettings()
+		{
+			string posX = Location.X.ToString();
+			string posY = Location.Y.ToString();
+			string width = Width.ToString();
+			string height = Height.ToString();
+			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}");
+		}
+
+		private void LoadFormSettings()
+		{
+			if (File.Exists("main_settings.txt"))
+			{
+				var parts = File.ReadAllText("main_settings.txt").Split('|');
+				Location = new System.Drawing.Point(int.Parse(parts[0]), int.Parse(parts[1]));
+				Width = int.Parse(parts[2]);
+				Height = int.Parse(parts[3]);
+			}
+		}
+
+		private void ShowLogToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			_logForm.Dispose();
+			_logForm = new LogForm();
+			_logForm.Show();
 		}
 	}
 }

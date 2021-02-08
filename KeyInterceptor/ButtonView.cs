@@ -1,5 +1,6 @@
 ﻿using KeyInterceptor.Properties;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -12,11 +13,16 @@ namespace KeyInterceptor
 		private ToolTip _toolTip = new ToolTip();
 		private Keys? _keyCode;
 
+		private DateTime _pressedTimestamp;
+		private Stopwatch _pressStopwatch;
+
 		private Bitmap _image = null;
 		private Bitmap _activeImage = null;
 
 		public string ImagePath { get; private set; }
 		public string ActiveImagePath { get; private set; }
+
+		public event EventHandler<KeyReleasedEventArgs> KeyReleased;
 
 		public Keys? KeyCode
 		{
@@ -39,6 +45,7 @@ namespace KeyInterceptor
 
 		public ButtonView(Keys? keyCode, int x, int y, int width, int height, string imagePath, string activeImagePath) : base()
 		{
+			_pressStopwatch = new Stopwatch();
 			KeyCode = keyCode;
 			Location = new Point(x, y);
 			Width = width;
@@ -72,11 +79,19 @@ namespace KeyInterceptor
 
 		public void Press()
 		{
-			this.Image = _activeImage;
+			if (!_pressStopwatch.IsRunning)
+			{
+				_pressedTimestamp = DateTime.Now;
+				_pressStopwatch.Restart();
+				this.Image = _activeImage;
+			}
 		}
 
 		public void UnPress()
 		{
+			_pressStopwatch.Stop();
+			long milliseconds = _pressStopwatch.ElapsedMilliseconds;
+			KeyReleased?.Invoke(this, new KeyReleasedEventArgs(KeyCode.Value, _pressedTimestamp, milliseconds));
 			this.Image = _image;
 		}
 
