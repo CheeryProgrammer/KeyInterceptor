@@ -35,12 +35,12 @@ namespace KeyInterceptor
 			this.безГраницToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.добавитьКнопкуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.показатьЛогToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.buttonContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.назначитьКнопкуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.изображениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.изображениеактивToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.показатьЛогToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenu.SuspendLayout();
 			this.buttonContextMenu.SuspendLayout();
 			this.SuspendLayout();
@@ -50,15 +50,15 @@ namespace KeyInterceptor
 			this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.безГраницToolStripMenuItem,
             this.добавитьКнопкуToolStripMenuItem,
-            this.выходToolStripMenuItem,
-            this.показатьЛогToolStripMenuItem});
+            this.показатьЛогToolStripMenuItem,
+            this.выходToolStripMenuItem});
 			this.contextMenu.Name = "contextMenu";
 			this.contextMenu.Size = new System.Drawing.Size(181, 114);
 			// 
 			// безГраницToolStripMenuItem
 			// 
 			this.безГраницToolStripMenuItem.Name = "безГраницToolStripMenuItem";
-			this.безГраницToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+			this.безГраницToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.безГраницToolStripMenuItem.Text = "Скрыть границы";
 			this.безГраницToolStripMenuItem.Click += new System.EventHandler(this.NoBordersToolStripMenuItem_Click);
 			// 
@@ -75,6 +75,13 @@ namespace KeyInterceptor
 			this.выходToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.выходToolStripMenuItem.Text = "Выход";
 			this.выходToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+			// 
+			// показатьЛогToolStripMenuItem
+			// 
+			this.показатьЛогToolStripMenuItem.Name = "показатьЛогToolStripMenuItem";
+			this.показатьЛогToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.показатьЛогToolStripMenuItem.Text = "Показать лог";
+			this.показатьЛогToolStripMenuItem.Click += new System.EventHandler(this.ShowLogToolStripMenuItem_Click);
 			// 
 			// buttonContextMenu
 			// 
@@ -113,13 +120,6 @@ namespace KeyInterceptor
 			this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
 			this.удалитьToolStripMenuItem.Text = "Удалить";
 			this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.RemoveButtonToolStripMenuItem_Click);
-			// 
-			// показатьЛогToolStripMenuItem
-			// 
-			this.показатьЛогToolStripMenuItem.Name = "показатьЛогToolStripMenuItem";
-			this.показатьЛогToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.показатьЛогToolStripMenuItem.Text = "Показать лог";
-			this.показатьЛогToolStripMenuItem.Click += new System.EventHandler(this.ShowLogToolStripMenuItem_Click);
 			// 
 			// KeyInterceptorForm
 			// 
