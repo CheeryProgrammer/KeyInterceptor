@@ -8,12 +8,15 @@ namespace KeyInterceptor
 {
 	class ButtonFileStore
 	{
+		private const string ImagesDirectory = "Images";
 		private const char _settingsDelimiter = '|';
 		private readonly string _fileName;
 
 		public ButtonFileStore(string fileName)
 		{
 			_fileName = fileName;
+			if (!Directory.Exists(ImagesDirectory))
+				Directory.CreateDirectory(ImagesDirectory);
 		}
 
 		public void Save(IEnumerable<ButtonView> views)
@@ -23,13 +26,15 @@ namespace KeyInterceptor
 
 		private string Serialize(ButtonView view)
 		{
+			string imagePath = Path.Combine(ImagesDirectory, Path.GetFileName(view.ImagePath ?? ""));
+			string activeImagePath = Path.Combine(ImagesDirectory, Path.GetFileName(view.ActiveImagePath ?? ""));
 			return $"{view.KeyCode}" +
 				$"|{view.Location.X}" +
 				$"|{view.Location.Y}" +
 				$"|{view.Width}" +
 				$"|{view.Height}" +
-				$"|{view.ImagePath}" +
-				$"|{view.ActiveImagePath}";
+				$"|{imagePath}" +
+				$"|{activeImagePath}";
 		}
 
 		public IEnumerable<ButtonView> Load()

@@ -56,6 +56,12 @@
     <Compile Include="ButtonView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ClockForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClockForm.Designer.cs">
+      <DependentUpon>ClockForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="KeyBindingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +83,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ClockForm.resx">
+      <DependentUpon>ClockForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="KeyBindingForm.resx">
       <DependentUpon>KeyBindingForm.cs</DependentUpon>
     </EmbeddedResource>

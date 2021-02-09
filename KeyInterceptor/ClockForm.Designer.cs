@@ -1,7 +1,7 @@
 ﻿
 namespace KeyInterceptor
 {
-	partial class LogForm
+	partial class ClockForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -30,39 +30,41 @@ namespace KeyInterceptor
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LogForm));
-			this.contextMenuLog = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.очиститьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClockForm));
+			this.lblClock = new System.Windows.Forms.Label();
+			this.contextMenuClock = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.шрифтToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.цветШрифтаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.цветФонаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.lbLog = new System.Windows.Forms.ListBox();
-			this.contextMenuLog.SuspendLayout();
+			this.contextMenuClock.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// contextMenuLog
+			// lblClock
 			// 
-			this.contextMenuLog.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.очиститьToolStripMenuItem,
+			this.lblClock.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.lblClock.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.lblClock.Location = new System.Drawing.Point(0, 0);
+			this.lblClock.Name = "lblClock";
+			this.lblClock.Size = new System.Drawing.Size(800, 450);
+			this.lblClock.TabIndex = 1;
+			this.lblClock.Text = "label1";
+			this.lblClock.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LblClock_MouseClick);
+			// 
+			// contextMenuClock
+			// 
+			this.contextMenuClock.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.шрифтToolStripMenuItem,
             this.цветШрифтаToolStripMenuItem,
             this.цветФонаToolStripMenuItem});
-			this.contextMenuLog.Name = "contextMenuLog";
-			this.contextMenuLog.Size = new System.Drawing.Size(158, 92);
-			// 
-			// очиститьToolStripMenuItem
-			// 
-			this.очиститьToolStripMenuItem.Name = "очиститьToolStripMenuItem";
-			this.очиститьToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-			this.очиститьToolStripMenuItem.Text = "Очистить";
-			this.очиститьToolStripMenuItem.Click += new System.EventHandler(this.ClearToolStripMenuItem_Click);
+			this.contextMenuClock.Name = "contextMenuClock";
+			this.contextMenuClock.Size = new System.Drawing.Size(158, 70);
 			// 
 			// шрифтToolStripMenuItem
 			// 
 			this.шрифтToolStripMenuItem.Name = "шрифтToolStripMenuItem";
 			this.шрифтToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
 			this.шрифтToolStripMenuItem.Text = "Шрифт...";
-			this.шрифтToolStripMenuItem.Click += new System.EventHandler(this.FontToolStripMenuItem_Click);
+			this.шрифтToolStripMenuItem.Click += new System.EventHandler(this.ChangeFontToolStripMenuItem_Click);
 			// 
 			// цветШрифтаToolStripMenuItem
 			// 
@@ -78,39 +80,29 @@ namespace KeyInterceptor
 			this.цветФонаToolStripMenuItem.Text = "Цвет фона...";
 			this.цветФонаToolStripMenuItem.Click += new System.EventHandler(this.ChangeBackColorToolStripMenuItem_Click);
 			// 
-			// lbLog
-			// 
-			this.lbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lbLog.FormattingEnabled = true;
-			this.lbLog.Location = new System.Drawing.Point(0, 0);
-			this.lbLog.Name = "lbLog";
-			this.lbLog.Size = new System.Drawing.Size(800, 450);
-			this.lbLog.TabIndex = 1;
-			this.lbLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LbLog_MouseClick);
-			// 
-			// LogForm
+			// ClockForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
-			this.Controls.Add(this.lbLog);
+			this.Controls.Add(this.lblClock);
 			this.DoubleBuffered = true;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "LogForm";
-			this.Text = "Log";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LogForm_FormClosing);
-			this.Load += new System.EventHandler(this.LogForm_Load);
-			this.contextMenuLog.ResumeLayout(false);
+			this.Name = "ClockForm";
+			this.Text = "Clock";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClockForm_FormClosing);
+			this.Load += new System.EventHandler(this.ClockForm_Load);
+			this.contextMenuClock.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
-		private System.Windows.Forms.ContextMenuStrip contextMenuLog;
-		private System.Windows.Forms.ToolStripMenuItem очиститьToolStripMenuItem;
+
+		private System.Windows.Forms.Label lblClock;
+		private System.Windows.Forms.ContextMenuStrip contextMenuClock;
 		private System.Windows.Forms.ToolStripMenuItem шрифтToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem цветШрифтаToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem цветФонаToolStripMenuItem;
-		private System.Windows.Forms.ListBox lbLog;
 	}
 }

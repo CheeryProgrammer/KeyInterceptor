@@ -1,6 +1,7 @@
 ﻿using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,7 +14,7 @@ namespace KeyInterceptor
 		private Dictionary<Keys, List<ButtonView>> _keyCodeToButtonViews = new Dictionary<Keys, List<ButtonView>>();
 		private ButtonFileStore _settings = new ButtonFileStore("settings.txt");
 		private LogForm _logForm;
-
+		private ClockForm _clockForm;
 
 		public event KeyEventHandler KeyDown;
 		public event KeyEventHandler KeyUp;
@@ -27,6 +28,8 @@ namespace KeyInterceptor
 
 		private void KeyInterceptorForm_Load(object sender, EventArgs e)
 		{
+			_logForm = new LogForm();
+
 			try
 			{
 				LoadButtons();
@@ -40,8 +43,6 @@ namespace KeyInterceptor
 			LoadFormSettings();
 
 			Subscribe();
-
-			_logForm = new LogForm();
 			_logForm.Show();
 		}
 
@@ -76,23 +77,25 @@ namespace KeyInterceptor
 		{
 			_logForm.BeginInvoke((Action)(()=>
 			{
-				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.fff}: {e.KeyCode} ({e.Duration} ms)");
+				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.fff}: {e.KeyCode} ({e.Duration:.0} ms)");
 			}));
 		}
 
 		private void PressButtonView(object sender, KeyEventArgs e)
 		{
+			var pressTimeStamp = DateTime.Now;
 			if (_keyCodeToButtonViews.TryGetValue(e.KeyCode, out List<ButtonView> views))
 			{
-				views.ForEach(btnView => btnView.Press());
+				views.ForEach(btnView => btnView.Press(pressTimeStamp));
 			}
 		}
 
 		private void ReleaseButtonView(object sender, KeyEventArgs e)
 		{
+			var unpressTimeStamp = DateTime.Now;
 			if (_keyCodeToButtonViews.TryGetValue(e.KeyCode, out List<ButtonView> views))
 			{
-				views.ForEach(btnView => btnView.UnPress());
+				views.ForEach(btnView => btnView.UnPress(unpressTimeStamp));
 			}
 		}
 
@@ -177,7 +180,7 @@ namespace KeyInterceptor
 		{
 			using (var openFileDialog = new OpenFileDialog())
 			{
-				openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+				openFileDialog.InitialDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Images");
 				openFileDialog.Filter = "Image|*.bmp;*.png";
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
@@ -198,7 +201,7 @@ namespace KeyInterceptor
 		{
 			using (var openFileDialog = new OpenFileDialog())
 			{
-				openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+				openFileDialog.InitialDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Images");
 				openFileDialog.Filter = "Image|*.bmp;*.png";
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
@@ -223,7 +226,8 @@ namespace KeyInterceptor
 
 		private void KeyInterceptorForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			_logForm.Close();
+			_logForm?.Close();
+			_clockForm?.Close();
 
 			m_GlobalHook.KeyDown -= PressButtonView;
 			m_GlobalHook.KeyUp -= ReleaseButtonView;
@@ -242,7 +246,8 @@ namespace KeyInterceptor
 			string posY = Location.Y.ToString();
 			string width = Width.ToString();
 			string height = Height.ToString();
-			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}");
+			string backColor = BackColor.ToArgb().ToString();
+			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}|{backColor}");
 		}
 
 		private void LoadFormSettings()
@@ -250,9 +255,10 @@ namespace KeyInterceptor
 			if (File.Exists("main_settings.txt"))
 			{
 				var parts = File.ReadAllText("main_settings.txt").Split('|');
-				Location = new System.Drawing.Point(int.Parse(parts[0]), int.Parse(parts[1]));
+				Location = new Point(int.Parse(parts[0]), int.Parse(parts[1]));
 				Width = int.Parse(parts[2]);
 				Height = int.Parse(parts[3]);
+				BackColor = Color.FromArgb(int.Parse(parts[4]));
 			}
 		}
 
@@ -261,6 +267,45 @@ namespace KeyInterceptor
 			_logForm.Dispose();
 			_logForm = new LogForm();
 			_logForm.Show();
+		}
+
+		private void ChangeBackColorToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			BackColor = PickColor(BackColor);
+		}
+
+		private Color PickColor(Color sourceColor)
+		{
+			using (var colorDialog = new ColorDialog())
+			{
+				colorDialog.Color = sourceColor;
+
+				if (DialogResult.OK == colorDialog.ShowDialog())
+				{
+					return colorDialog.Color;
+				}
+
+				return sourceColor;
+			}
+		}
+
+		private void ShowClockToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if(_clockForm?.IsDisposed ?? false)
+			{
+				_clockForm = null;
+			}
+
+			if (_clockForm != null)
+			{
+				_clockForm.Close();
+				_clockForm = null;
+			}
+			else
+			{
+				_clockForm = new ClockForm();
+				_clockForm.Show();
+			}
 		}
 	}
 }

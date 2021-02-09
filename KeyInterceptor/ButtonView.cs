@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KeyInterceptor
@@ -14,10 +15,11 @@ namespace KeyInterceptor
 		private Keys? _keyCode;
 
 		private DateTime _pressedTimestamp;
-		private Stopwatch _pressStopwatch;
 
 		private Bitmap _image = null;
 		private Bitmap _activeImage = null;
+
+		private volatile bool _pressed = false;
 
 		public string ImagePath { get; private set; }
 		public string ActiveImagePath { get; private set; }
@@ -45,7 +47,6 @@ namespace KeyInterceptor
 
 		public ButtonView(Keys? keyCode, int x, int y, int width, int height, string imagePath, string activeImagePath) : base()
 		{
-			_pressStopwatch = new Stopwatch();
 			KeyCode = keyCode;
 			Location = new Point(x, y);
 			Width = width;
@@ -55,7 +56,39 @@ namespace KeyInterceptor
 			SizeMode = PictureBoxSizeMode.StretchImage;
 			MouseDown += ButtonView_MouseDown;
 			MouseMove += ButtonView_MouseMove;
-			UnPress();
+			MouseUp += Redraw;
+			UnPress(DateTime.MinValue);
+		}
+
+		private void Redraw(object sender, MouseEventArgs e)
+		{
+			Invalidate();
+			Update();
+		}
+
+		protected override void OnPaintBackground(PaintEventArgs e)
+		{
+			base.OnPaintBackground(e);
+			Graphics g = e.Graphics;
+
+			if (this.Parent != null)
+			{
+				var index = Parent.Controls.GetChildIndex(this);
+				for (var i = Parent.Controls.Count - 1; i > index; i--)
+				{
+					var c = Parent.Controls[i];
+					if (c.Bounds.IntersectsWith(Bounds) && c.Visible)
+					{
+						using (var bmp = new Bitmap(c.Width, c.Height, g))
+						{
+							c.DrawToBitmap(bmp, c.ClientRectangle);
+							g.TranslateTransform(c.Left - Left, c.Top - Top);
+							g.DrawImageUnscaled(bmp, Point.Empty);
+							g.TranslateTransform(Left - c.Left, Top - c.Top);
+						}
+					}
+				}
+			}
 		}
 
 		private void ButtonView_MouseDown(object sender, MouseEventArgs e)
@@ -74,25 +107,28 @@ namespace KeyInterceptor
 			{
 				this.Left = e.X + this.Left - _cursorLocation.X;
 				this.Top = e.Y + this.Top - _cursorLocation.Y;
+				Redraw(null, null);
 			}
 		}
 
-		public void Press()
+		public void Press(DateTime pressTimestamp)
 		{
-			if (!_pressStopwatch.IsRunning)
+			if (!_pressed)
 			{
-				_pressedTimestamp = DateTime.Now;
-				_pressStopwatch.Restart();
-				this.Image = _activeImage;
+				_pressed = true;
+				_pressedTimestamp = pressTimestamp;
+				BeginInvoke((Action)(() => { this.Image = _activeImage; }));
 			}
 		}
 
-		public void UnPress()
+		public void UnPress(DateTime unpressTimestamp)
 		{
-			_pressStopwatch.Stop();
-			long milliseconds = _pressStopwatch.ElapsedMilliseconds;
-			KeyReleased?.Invoke(this, new KeyReleasedEventArgs(KeyCode.Value, _pressedTimestamp, milliseconds));
-			this.Image = _image;
+			_pressed = false;
+			Task.Run(() =>
+			{
+				KeyReleased?.Invoke(this, new KeyReleasedEventArgs(KeyCode.Value, _pressedTimestamp, (unpressTimestamp - _pressedTimestamp).TotalMilliseconds));
+				this.Image = _image;
+			});
 		}
 
 		internal void SetImage(string imagePath)
@@ -101,7 +137,7 @@ namespace KeyInterceptor
 			_image = imagePath == null || !File.Exists(imagePath)
 				? Resources.ButtonDefault
 				: new Bitmap(imagePath);
-			UnPress();
+			UnPress(DateTime.MinValue);
 		}
 
 		internal void SetActiveImage(string activeImagePath)
@@ -116,6 +152,7 @@ namespace KeyInterceptor
 		{
 			MouseDown -= ButtonView_MouseDown;
 			MouseMove -= ButtonView_MouseMove;
+			MouseUp -= Redraw;
 
 			base.Dispose(disposing);
 		}

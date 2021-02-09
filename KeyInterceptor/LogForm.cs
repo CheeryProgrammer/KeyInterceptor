@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace KeyInterceptor
@@ -13,11 +14,14 @@ namespace KeyInterceptor
 			InitializeComponent();
 		}
 
-		private void TbLog_MouseClick(object sender, MouseEventArgs e)
+		private void LbLog_MouseClick(object sender, MouseEventArgs e)
 		{
 			if(e.Button == MouseButtons.Right)
 			{
-				contextMenuLog.Show(e.Location);
+				Point menuLocation = e.Location;
+				menuLocation.Offset(Location);
+				menuLocation.Offset(lbLog.Location);
+				contextMenuLog.Show(menuLocation);
 			}
 		}
 
@@ -28,25 +32,25 @@ namespace KeyInterceptor
 
 		private void ClearToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			tbLog.Clear();
+			lbLog.Items.Clear();
 		}
 
 		private void FontToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using(var fontDialog = new FontDialog())
 			{
-				fontDialog.Font = tbLog.Font;
+				fontDialog.Font = lbLog.Font;
 
 				if(DialogResult.OK == fontDialog.ShowDialog())
 				{
-					tbLog.Font = fontDialog.Font;
+					lbLog.Font = fontDialog.Font;
 				}
 			}
 		}
 
 		private void ChangeFontColorToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			tbLog.ForeColor = PickColor(tbLog.ForeColor);
+			lbLog.ForeColor = PickColor(lbLog.ForeColor);
 		}
 
 		private Color PickColor(Color sourceColor)
@@ -66,12 +70,16 @@ namespace KeyInterceptor
 
 		private void ChangeBackColorToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			tbLog.BackColor = PickColor(tbLog.BackColor);
+			lbLog.BackColor = PickColor(lbLog.BackColor);
 		}
 
 		public void Append(string log)
 		{
-			tbLog.AppendText(log + Environment.NewLine);
+			while(lbLog.ClientSize.Height < (lbLog.Items.Count+1) * lbLog.ItemHeight)
+			{
+				lbLog.Items.RemoveAt(0);
+			}
+			lbLog.Items.Insert(lbLog.Items.Count, log);
 		}
 
 		private void LogForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -81,10 +89,10 @@ namespace KeyInterceptor
 
 		private void SaveSettings()
 		{
-			string fontColor = tbLog.ForeColor.ToArgb().ToString();
-			string backColor = tbLog.BackColor.ToArgb().ToString();
+			string fontColor = lbLog.ForeColor.ToArgb().ToString();
+			string backColor = lbLog.BackColor.ToArgb().ToString();
 			TypeConverter converter = TypeDescriptor.GetConverter(typeof(Font));
-			string font = converter.ConvertToInvariantString(tbLog.Font);
+			string font = converter.ConvertToInvariantString(lbLog.Font);
 			string posX = Location.X.ToString();
 			string posY = Location.Y.ToString();
 			string width = Width.ToString();
@@ -97,11 +105,11 @@ namespace KeyInterceptor
 			if (File.Exists("log_settings.txt"))
 			{
 				var parts = File.ReadAllText("log_settings.txt").Split('|');
-				tbLog.ForeColor = Color.FromArgb(int.Parse(parts[0]));
-				tbLog.BackColor = Color.FromArgb(int.Parse(parts[1]));
+				lbLog.ForeColor = Color.FromArgb(int.Parse(parts[0]));
+				lbLog.BackColor = Color.FromArgb(int.Parse(parts[1]));
 
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Font));
-				tbLog.Font = (Font)converter.ConvertFromInvariantString(parts[2]);
+				lbLog.Font = (Font)converter.ConvertFromInvariantString(parts[2]);
 				Location = new Point(int.Parse(parts[3]), int.Parse(parts[4]));
 				Width = int.Parse(parts[5]);
 				Height = int.Parse(parts[6]);
