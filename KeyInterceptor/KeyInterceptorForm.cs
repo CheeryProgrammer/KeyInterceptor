@@ -77,7 +77,7 @@ namespace KeyInterceptor
 		{
 			_logForm.BeginInvoke((Action)(()=>
 			{
-				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.fff}: {e.KeyCode} ({e.Duration:.0} ms)");
+				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.fff}: {e.KeyCode} ({Math.Round(e.Duration)} ms)");
 			}));
 		}
 
@@ -247,7 +247,8 @@ namespace KeyInterceptor
 			string width = Width.ToString();
 			string height = Height.ToString();
 			string backColor = BackColor.ToArgb().ToString();
-			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}|{backColor}");
+			string topMost = TopMost.ToString();
+			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}|{backColor}|{topMost}");
 		}
 
 		private void LoadFormSettings()
@@ -259,6 +260,7 @@ namespace KeyInterceptor
 				Width = int.Parse(parts[2]);
 				Height = int.Parse(parts[3]);
 				BackColor = Color.FromArgb(int.Parse(parts[4]));
+				TopMost = bool.Parse(parts[5]);
 			}
 		}
 
@@ -305,6 +307,15 @@ namespace KeyInterceptor
 			{
 				_clockForm = new ClockForm();
 				_clockForm.Show();
+			}
+		}
+
+		private void SwitchTopMostToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			TopMost = !TopMost;
+			if(sender is ToolStripMenuItem menuItem)
+			{
+				menuItem.Checked = TopMost;
 			}
 		}
 	}

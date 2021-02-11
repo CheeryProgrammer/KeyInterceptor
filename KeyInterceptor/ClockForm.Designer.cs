@@ -36,6 +36,7 @@ namespace KeyInterceptor
 			this.шрифтToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.цветШрифтаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.цветФонаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.поверхВсехОконToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenuClock.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -55,30 +56,38 @@ namespace KeyInterceptor
 			this.contextMenuClock.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.шрифтToolStripMenuItem,
             this.цветШрифтаToolStripMenuItem,
-            this.цветФонаToolStripMenuItem});
+            this.цветФонаToolStripMenuItem,
+            this.поверхВсехОконToolStripMenuItem});
 			this.contextMenuClock.Name = "contextMenuClock";
-			this.contextMenuClock.Size = new System.Drawing.Size(158, 70);
+			this.contextMenuClock.Size = new System.Drawing.Size(181, 114);
 			// 
 			// шрифтToolStripMenuItem
 			// 
 			this.шрифтToolStripMenuItem.Name = "шрифтToolStripMenuItem";
-			this.шрифтToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.шрифтToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.шрифтToolStripMenuItem.Text = "Шрифт...";
 			this.шрифтToolStripMenuItem.Click += new System.EventHandler(this.ChangeFontToolStripMenuItem_Click);
 			// 
 			// цветШрифтаToolStripMenuItem
 			// 
 			this.цветШрифтаToolStripMenuItem.Name = "цветШрифтаToolStripMenuItem";
-			this.цветШрифтаToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.цветШрифтаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.цветШрифтаToolStripMenuItem.Text = "Цвет шрифта...";
 			this.цветШрифтаToolStripMenuItem.Click += new System.EventHandler(this.ChangeFontColorToolStripMenuItem_Click);
 			// 
 			// цветФонаToolStripMenuItem
 			// 
 			this.цветФонаToolStripMenuItem.Name = "цветФонаToolStripMenuItem";
-			this.цветФонаToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.цветФонаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.цветФонаToolStripMenuItem.Text = "Цвет фона...";
 			this.цветФонаToolStripMenuItem.Click += new System.EventHandler(this.ChangeBackColorToolStripMenuItem_Click);
+			// 
+			// поверхВсехОконToolStripMenuItem
+			// 
+			this.поверхВсехОконToolStripMenuItem.Name = "поверхВсехОконToolStripMenuItem";
+			this.поверхВсехОконToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.поверхВсехОконToolStripMenuItem.Text = "Поверх всех окон";
+			this.поверхВсехОконToolStripMenuItem.Click += new System.EventHandler(this.SwitchTopMostToolStripMenuItem_Click);
 			// 
 			// ClockForm
 			// 
@@ -104,5 +113,6 @@ namespace KeyInterceptor
 		private System.Windows.Forms.ToolStripMenuItem шрифтToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem цветШрифтаToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem цветФонаToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem поверхВсехОконToolStripMenuItem;
 	}
 }

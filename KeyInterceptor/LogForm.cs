@@ -97,7 +97,8 @@ namespace KeyInterceptor
 			string posY = Location.Y.ToString();
 			string width = Width.ToString();
 			string height = Height.ToString();
-			File.WriteAllText("log_settings.txt", $"{fontColor}|{backColor}|{font}|{posX}|{posY}|{width}|{height}");
+			string topMost = TopMost.ToString();
+			File.WriteAllText("log_settings.txt", $"{fontColor}|{backColor}|{font}|{posX}|{posY}|{width}|{height}|{topMost}");
 		}
 
 		private void LoadSettings()
@@ -113,6 +114,34 @@ namespace KeyInterceptor
 				Location = new Point(int.Parse(parts[3]), int.Parse(parts[4]));
 				Width = int.Parse(parts[5]);
 				Height = int.Parse(parts[6]);
+				TopMost = bool.Parse(parts[7]);
+			}
+		}
+
+		private void LogForm_Resize(object sender, EventArgs e)
+		{
+			AlignLog();
+		}
+
+		private void AlignLog()
+		{
+			while (lbLog.ClientSize.Height < lbLog.Items.Count * lbLog.ItemHeight)
+			{
+				lbLog.Items.RemoveAt(0);
+			}
+		}
+
+		private void LogForm_ResizeEnd(object sender, EventArgs e)
+		{
+			ClientSize = new Size(ClientSize.Width, lbLog.ClientSize.Height + 4);
+		}
+
+		private void SwitchTopMostToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			TopMost = !TopMost;
+			if(sender is ToolStripMenuItem menuItem)
+			{
+				menuItem.Checked = TopMost;
 			}
 		}
 	}

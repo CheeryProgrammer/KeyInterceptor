@@ -38,6 +38,7 @@ namespace KeyInterceptor
 			this.цветФонаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
 			this.показатьЛогToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.показатьЧасыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
 			this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.buttonContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -45,7 +46,7 @@ namespace KeyInterceptor
 			this.изображениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.изображениеактивToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.показатьЧасыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.поверхВсехОконToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenu.SuspendLayout();
 			this.buttonContextMenu.SuspendLayout();
 			this.SuspendLayout();
@@ -57,13 +58,14 @@ namespace KeyInterceptor
             this.toolStripMenuItem2,
             this.безГраницToolStripMenuItem,
             this.цветФонаToolStripMenuItem,
+            this.поверхВсехОконToolStripMenuItem,
             this.toolStripMenuItem1,
             this.показатьЛогToolStripMenuItem,
             this.показатьЧасыToolStripMenuItem,
             this.toolStripMenuItem3,
             this.выходToolStripMenuItem});
 			this.contextMenu.Name = "contextMenu";
-			this.contextMenu.Size = new System.Drawing.Size(181, 176);
+			this.contextMenu.Size = new System.Drawing.Size(181, 198);
 			// 
 			// добавитьКнопкуToolStripMenuItem
 			// 
@@ -102,6 +104,13 @@ namespace KeyInterceptor
 			this.показатьЛогToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.показатьЛогToolStripMenuItem.Text = "Показать лог";
 			this.показатьЛогToolStripMenuItem.Click += new System.EventHandler(this.ShowLogToolStripMenuItem_Click);
+			// 
+			// показатьЧасыToolStripMenuItem
+			// 
+			this.показатьЧасыToolStripMenuItem.Name = "показатьЧасыToolStripMenuItem";
+			this.показатьЧасыToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.показатьЧасыToolStripMenuItem.Text = "Показать часы";
+			this.показатьЧасыToolStripMenuItem.Click += new System.EventHandler(this.ShowClockToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem3
 			// 
@@ -153,12 +162,12 @@ namespace KeyInterceptor
 			this.удалитьToolStripMenuItem.Text = "Удалить";
 			this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.RemoveButtonToolStripMenuItem_Click);
 			// 
-			// показатьЧасыToolStripMenuItem
+			// поверхВсехОконToolStripMenuItem
 			// 
-			this.показатьЧасыToolStripMenuItem.Name = "показатьЧасыToolStripMenuItem";
-			this.показатьЧасыToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.показатьЧасыToolStripMenuItem.Text = "Показать часы";
-			this.показатьЧасыToolStripMenuItem.Click += new System.EventHandler(this.ShowClockToolStripMenuItem_Click);
+			this.поверхВсехОконToolStripMenuItem.Name = "поверхВсехОконToolStripMenuItem";
+			this.поверхВсехОконToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.поверхВсехОконToolStripMenuItem.Text = "Поверх всех окон";
+			this.поверхВсехОконToolStripMenuItem.Click += new System.EventHandler(this.SwitchTopMostToolStripMenuItem_Click);
 			// 
 			// KeyInterceptorForm
 			// 
@@ -195,6 +204,7 @@ namespace KeyInterceptor
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
 		private System.Windows.Forms.ToolStripMenuItem показатьЧасыToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem поверхВсехОконToolStripMenuItem;
 	}
 }
 

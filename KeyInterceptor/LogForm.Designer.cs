@@ -37,6 +37,7 @@ namespace KeyInterceptor
 			this.цветШрифтаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.цветФонаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.lbLog = new System.Windows.Forms.ListBox();
+			this.поверхВсехОконToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenuLog.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -46,9 +47,10 @@ namespace KeyInterceptor
             this.очиститьToolStripMenuItem,
             this.шрифтToolStripMenuItem,
             this.цветШрифтаToolStripMenuItem,
-            this.цветФонаToolStripMenuItem});
+            this.цветФонаToolStripMenuItem,
+            this.поверхВсехОконToolStripMenuItem});
 			this.contextMenuLog.Name = "contextMenuLog";
-			this.contextMenuLog.Size = new System.Drawing.Size(158, 92);
+			this.contextMenuLog.Size = new System.Drawing.Size(181, 136);
 			// 
 			// очиститьToolStripMenuItem
 			// 
@@ -88,6 +90,13 @@ namespace KeyInterceptor
 			this.lbLog.TabIndex = 1;
 			this.lbLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LbLog_MouseClick);
 			// 
+			// поверхВсехОконToolStripMenuItem
+			// 
+			this.поверхВсехОконToolStripMenuItem.Name = "поверхВсехОконToolStripMenuItem";
+			this.поверхВсехОконToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.поверхВсехОконToolStripMenuItem.Text = "Поверх всех окон";
+			this.поверхВсехОконToolStripMenuItem.Click += new System.EventHandler(this.SwitchTopMostToolStripMenuItem_Click);
+			// 
 			// LogForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -100,6 +109,8 @@ namespace KeyInterceptor
 			this.Text = "Log";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LogForm_FormClosing);
 			this.Load += new System.EventHandler(this.LogForm_Load);
+			this.ResizeEnd += new System.EventHandler(this.LogForm_ResizeEnd);
+			this.Resize += new System.EventHandler(this.LogForm_Resize);
 			this.contextMenuLog.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -112,5 +123,6 @@ namespace KeyInterceptor
 		private System.Windows.Forms.ToolStripMenuItem цветШрифтаToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem цветФонаToolStripMenuItem;
 		private System.Windows.Forms.ListBox lbLog;
+		private System.Windows.Forms.ToolStripMenuItem поверхВсехОконToolStripMenuItem;
 	}
 }
