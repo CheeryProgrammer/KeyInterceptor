@@ -75,6 +75,9 @@ namespace KeyInterceptor
 
 		private void LogKey(object sender, KeyReleasedEventArgs e)
 		{
+			if (_logForm == null || _logForm.IsDisposed)
+				return;
+
 			_logForm.BeginInvoke((Action)(()=>
 			{
 				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.fff}: {e.KeyCode} ({Math.Round(e.Duration)} ms)");

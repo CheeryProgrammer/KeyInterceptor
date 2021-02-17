@@ -75,10 +75,7 @@ namespace KeyInterceptor
 
 		public void Append(string log)
 		{
-			while(lbLog.ClientSize.Height < (lbLog.Items.Count+1) * lbLog.ItemHeight)
-			{
-				lbLog.Items.RemoveAt(0);
-			}
+			AlignLog(1);
 			lbLog.Items.Insert(lbLog.Items.Count, log);
 		}
 
@@ -123,9 +120,9 @@ namespace KeyInterceptor
 			AlignLog();
 		}
 
-		private void AlignLog()
+		private void AlignLog(int remainCount = 0)
 		{
-			while (lbLog.ClientSize.Height < lbLog.Items.Count * lbLog.ItemHeight)
+			while ((lbLog.ClientSize.Height < (lbLog.Items.Count + remainCount) * lbLog.ItemHeight) && lbLog.Items.Count > 0)
 			{
 				lbLog.Items.RemoveAt(0);
 			}
