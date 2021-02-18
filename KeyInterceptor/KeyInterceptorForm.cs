@@ -14,7 +14,7 @@ namespace KeyInterceptor
 		private Dictionary<Keys, List<ButtonView>> _keyCodeToButtonViews = new Dictionary<Keys, List<ButtonView>>();
 		private ButtonFileStore _settings = new ButtonFileStore("settings.txt");
 		private LogForm _logForm;
-		private ClockForm _clockForm;
+		private KeyNamesMap _keyMap = new KeyNamesMap();
 
 		public event KeyEventHandler KeyDown;
 		public event KeyEventHandler KeyUp;
@@ -80,7 +80,7 @@ namespace KeyInterceptor
 
 			_logForm.BeginInvoke((Action)(()=>
 			{
-				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.fff}: {e.KeyCode} ({Math.Round(e.Duration)} ms)");
+				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.ff} {_keyMap.Map(e.KeyCode.ToString())} {Math.Round(e.Duration)} ms");
 			}));
 		}
 
@@ -230,7 +230,6 @@ namespace KeyInterceptor
 		private void KeyInterceptorForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			_logForm?.Close();
-			_clockForm?.Close();
 
 			m_GlobalHook.KeyDown -= PressButtonView;
 			m_GlobalHook.KeyUp -= ReleaseButtonView;
@@ -291,25 +290,6 @@ namespace KeyInterceptor
 				}
 
 				return sourceColor;
-			}
-		}
-
-		private void ShowClockToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if(_clockForm?.IsDisposed ?? false)
-			{
-				_clockForm = null;
-			}
-
-			if (_clockForm != null)
-			{
-				_clockForm.Close();
-				_clockForm = null;
-			}
-			else
-			{
-				_clockForm = new ClockForm();
-				_clockForm.Show();
 			}
 		}
 

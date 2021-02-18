@@ -10,6 +10,8 @@ namespace KeyInterceptor
 {
 	public partial class ButtonView : PictureBox
 	{
+		private static readonly KeyNamesMap _keyMap = new KeyNamesMap();
+
 		private Point _cursorLocation;
 		private ToolTip _toolTip = new ToolTip();
 		private Keys? _keyCode;
@@ -34,7 +36,7 @@ namespace KeyInterceptor
 			}
 			set
 			{
-				_toolTip.SetToolTip(this, value?.ToString() ?? "Не назначена");
+				_toolTip.SetToolTip(this, _keyMap.Map(value?.ToString()) ?? "Не назначена");
 				_keyCode = value;
 			}
 		}

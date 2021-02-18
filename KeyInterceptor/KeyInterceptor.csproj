@@ -56,12 +56,6 @@
     <Compile Include="ButtonView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ClockForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ClockForm.Designer.cs">
-      <DependentUpon>ClockForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="KeyBindingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,6 +68,7 @@
     <Compile Include="KeyInterceptorForm.Designer.cs">
       <DependentUpon>KeyInterceptorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="KeyNamesMap.cs" />
     <Compile Include="KeyReleasedEventArgs.cs" />
     <Compile Include="LogForm.cs">
       <SubType>Form</SubType>
@@ -83,9 +78,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ClockForm.resx">
-      <DependentUpon>ClockForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="KeyBindingForm.resx">
       <DependentUpon>KeyBindingForm.cs</DependentUpon>
     </EmbeddedResource>

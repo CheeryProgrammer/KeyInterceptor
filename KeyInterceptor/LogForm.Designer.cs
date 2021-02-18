@@ -36,8 +36,9 @@ namespace KeyInterceptor
 			this.шрифтToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.цветШрифтаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.цветФонаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.lbLog = new System.Windows.Forms.ListBox();
 			this.поверхВсехОконToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.lbLog = new System.Windows.Forms.ListBox();
+			this.rtbClock = new System.Windows.Forms.RichTextBox();
 			this.contextMenuLog.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -50,58 +51,73 @@ namespace KeyInterceptor
             this.цветФонаToolStripMenuItem,
             this.поверхВсехОконToolStripMenuItem});
 			this.contextMenuLog.Name = "contextMenuLog";
-			this.contextMenuLog.Size = new System.Drawing.Size(181, 136);
+			this.contextMenuLog.Size = new System.Drawing.Size(173, 114);
 			// 
 			// очиститьToolStripMenuItem
 			// 
 			this.очиститьToolStripMenuItem.Name = "очиститьToolStripMenuItem";
-			this.очиститьToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.очиститьToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
 			this.очиститьToolStripMenuItem.Text = "Очистить";
 			this.очиститьToolStripMenuItem.Click += new System.EventHandler(this.ClearToolStripMenuItem_Click);
 			// 
 			// шрифтToolStripMenuItem
 			// 
 			this.шрифтToolStripMenuItem.Name = "шрифтToolStripMenuItem";
-			this.шрифтToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.шрифтToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
 			this.шрифтToolStripMenuItem.Text = "Шрифт...";
 			this.шрифтToolStripMenuItem.Click += new System.EventHandler(this.FontToolStripMenuItem_Click);
 			// 
 			// цветШрифтаToolStripMenuItem
 			// 
 			this.цветШрифтаToolStripMenuItem.Name = "цветШрифтаToolStripMenuItem";
-			this.цветШрифтаToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.цветШрифтаToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
 			this.цветШрифтаToolStripMenuItem.Text = "Цвет шрифта...";
 			this.цветШрифтаToolStripMenuItem.Click += new System.EventHandler(this.ChangeFontColorToolStripMenuItem_Click);
 			// 
 			// цветФонаToolStripMenuItem
 			// 
 			this.цветФонаToolStripMenuItem.Name = "цветФонаToolStripMenuItem";
-			this.цветФонаToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+			this.цветФонаToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
 			this.цветФонаToolStripMenuItem.Text = "Цвет фона...";
 			this.цветФонаToolStripMenuItem.Click += new System.EventHandler(this.ChangeBackColorToolStripMenuItem_Click);
-			// 
-			// lbLog
-			// 
-			this.lbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lbLog.FormattingEnabled = true;
-			this.lbLog.Location = new System.Drawing.Point(0, 0);
-			this.lbLog.Name = "lbLog";
-			this.lbLog.Size = new System.Drawing.Size(800, 450);
-			this.lbLog.TabIndex = 1;
-			this.lbLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LbLog_MouseClick);
 			// 
 			// поверхВсехОконToolStripMenuItem
 			// 
 			this.поверхВсехОконToolStripMenuItem.Name = "поверхВсехОконToolStripMenuItem";
-			this.поверхВсехОконToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.поверхВсехОконToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
 			this.поверхВсехОконToolStripMenuItem.Text = "Поверх всех окон";
 			this.поверхВсехОконToolStripMenuItem.Click += new System.EventHandler(this.SwitchTopMostToolStripMenuItem_Click);
+			// 
+			// lbLog
+			// 
+			this.lbLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.lbLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.lbLog.FormattingEnabled = true;
+			this.lbLog.Location = new System.Drawing.Point(0, 0);
+			this.lbLog.Name = "lbLog";
+			this.lbLog.Size = new System.Drawing.Size(800, 312);
+			this.lbLog.TabIndex = 1;
+			this.lbLog.TabStop = false;
+			this.lbLog.SelectedIndexChanged += new System.EventHandler(this.lbLog_SelectedIndexChanged);
+			this.lbLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LbLog_MouseClick);
+			// 
+			// rtbClock
+			// 
+			this.rtbClock.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.rtbClock.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.rtbClock.Location = new System.Drawing.Point(0, 397);
+			this.rtbClock.Name = "rtbClock";
+			this.rtbClock.Size = new System.Drawing.Size(800, 19);
+			this.rtbClock.TabIndex = 4;
+			this.rtbClock.Text = "";
 			// 
 			// LogForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.ClientSize = new System.Drawing.Size(800, 416);
+			this.Controls.Add(this.rtbClock);
 			this.Controls.Add(this.lbLog);
 			this.DoubleBuffered = true;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -122,7 +138,8 @@ namespace KeyInterceptor
 		private System.Windows.Forms.ToolStripMenuItem шрифтToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem цветШрифтаToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem цветФонаToolStripMenuItem;
-		private System.Windows.Forms.ListBox lbLog;
 		private System.Windows.Forms.ToolStripMenuItem поверхВсехОконToolStripMenuItem;
+		private System.Windows.Forms.ListBox lbLog;
+		private System.Windows.Forms.RichTextBox rtbClock;
 	}
 }
