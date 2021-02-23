@@ -21,6 +21,8 @@ namespace KeyInterceptor
 
 		private IKeyboardMouseEvents m_GlobalHook;
 
+		private IClock _clock;
+
 		public KeyInterceptorForm()
 		{
 			InitializeComponent();
@@ -28,7 +30,9 @@ namespace KeyInterceptor
 
 		private void KeyInterceptorForm_Load(object sender, EventArgs e)
 		{
-			_logForm = new LogForm();
+			_clock = new Clock();
+
+			_logForm = new LogForm(_clock);
 
 			try
 			{
@@ -80,13 +84,18 @@ namespace KeyInterceptor
 
 			_logForm.BeginInvoke((Action)(()=>
 			{
-				_logForm.Append($"{e.PressedTimestamp:HH:mm:ss.ff} {_keyMap.Map(e.KeyCode.ToString())} {Math.Round(e.Duration)} ms");
+				var logItem = new LogItem
+				{
+					Brush = e.Brush,
+					Text = $"{e.PressedTimestamp:HH:mm:ss.fff} {_keyMap.Map(e.KeyCode.ToString())} {Math.Round(e.Duration)} ms"
+				};
+				_logForm.Append(ref logItem);
 			}));
 		}
 
 		private void PressButtonView(object sender, KeyEventArgs e)
 		{
-			var pressTimeStamp = DateTime.Now;
+			var pressTimeStamp = _clock.Now;
 			if (_keyCodeToButtonViews.TryGetValue(e.KeyCode, out List<ButtonView> views))
 			{
 				views.ForEach(btnView => btnView.Press(pressTimeStamp));
@@ -95,7 +104,7 @@ namespace KeyInterceptor
 
 		private void ReleaseButtonView(object sender, KeyEventArgs e)
 		{
-			var unpressTimeStamp = DateTime.Now;
+			var unpressTimeStamp = _clock.Now;
 			if (_keyCodeToButtonViews.TryGetValue(e.KeyCode, out List<ButtonView> views))
 			{
 				views.ForEach(btnView => btnView.UnPress(unpressTimeStamp));
@@ -230,6 +239,7 @@ namespace KeyInterceptor
 		private void KeyInterceptorForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			_logForm?.Close();
+			_clock?.Dispose();
 
 			m_GlobalHook.KeyDown -= PressButtonView;
 			m_GlobalHook.KeyUp -= ReleaseButtonView;
@@ -269,7 +279,7 @@ namespace KeyInterceptor
 		private void ShowLogToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			_logForm.Dispose();
-			_logForm = new LogForm();
+			_logForm = new LogForm(_clock);
 			_logForm.Show();
 		}
 

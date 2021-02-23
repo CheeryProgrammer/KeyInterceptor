@@ -31,6 +31,9 @@ namespace KeyInterceptor
 
 		public string Map(string systemKeyName)
 		{
+			if (systemKeyName == null)
+				return null;
+
 			if (TryGetValue(systemKeyName, out string mappedName))
 				return mappedName;
 

@@ -1,6 +1,5 @@
 ﻿using KeyInterceptor.Properties;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
@@ -23,6 +22,7 @@ namespace KeyInterceptor
 
 		private volatile bool _pressed = false;
 
+		public Brush Brush { get; private set; }
 		public string ImagePath { get; private set; }
 		public string ActiveImagePath { get; private set; }
 
@@ -41,13 +41,13 @@ namespace KeyInterceptor
 			}
 		}
 
-		public ButtonView(): this(null, 10, 10, 40 ,40, null, null)
+		public ButtonView(): this(null, 10, 10, 40 ,40, null, null, null)
 		{
 			Image = Resources.ButtonDefault;
 			KeyCode = null;
 		}
 
-		public ButtonView(Keys? keyCode, int x, int y, int width, int height, string imagePath, string activeImagePath) : base()
+		public ButtonView(Keys? keyCode, int x, int y, int width, int height, string imagePath, string activeImagePath, Brush brush) : base()
 		{
 			KeyCode = keyCode;
 			Location = new Point(x, y);
@@ -55,6 +55,7 @@ namespace KeyInterceptor
 			Height = height;
 			SetImage(imagePath);
 			SetActiveImage(activeImagePath);
+			Brush = brush;
 			SizeMode = PictureBoxSizeMode.StretchImage;
 			MouseDown += ButtonView_MouseDown;
 			MouseMove += ButtonView_MouseMove;
@@ -128,7 +129,7 @@ namespace KeyInterceptor
 			_pressed = false;
 			Task.Run(() =>
 			{
-				KeyReleased?.Invoke(this, new KeyReleasedEventArgs(KeyCode.Value, _pressedTimestamp, (unpressTimestamp - _pressedTimestamp).TotalMilliseconds));
+				KeyReleased?.Invoke(this, new KeyReleasedEventArgs(KeyCode.Value, _pressedTimestamp, (unpressTimestamp - _pressedTimestamp).TotalMilliseconds, Brush));
 				this.Image = _image;
 			});
 		}

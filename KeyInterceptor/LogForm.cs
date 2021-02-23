@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -11,19 +10,20 @@ namespace KeyInterceptor
 {
 	public partial class LogForm : Form
 	{
-		private Clock _clock;
+		private IClock _clock;
 		private Label invisibleLabelForFocus;
+		private Brush defaultForegroundBrush;
 
-		public LogForm()
+		public LogForm(IClock clock)
 		{
 			InitializeComponent();
+			_clock = clock;
 		}
 
 		private void LogForm_Load(object sender, EventArgs e)
 		{
 			LoadSettings();
-			AlignLog();
-			_clock = new Clock();
+
 			Task.Factory.StartNew(UpdateClock, TaskCreationOptions.LongRunning);
 
 
@@ -35,11 +35,26 @@ namespace KeyInterceptor
 			rtbClock.GotFocus += (s, a) => invisibleLabelForFocus.Focus();
 			rtbClock.Height = lbLog.ItemHeight;
 			lbLog.Anchor |= AnchorStyles.Bottom;
+			lbLog.DrawMode = DrawMode.OwnerDrawFixed;
+			lbLog.DrawItem += LbLog_DrawItem;
+			UpdateLogItemHeight();
+			AlignLogClientSize();
+			AlignLogItems();
+		}
+
+		private void LbLog_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			e.DrawBackground();
+			if (e.Index < 0 || e.Index >= lbLog.Items.Count)
+				return;
+
+			LogItem logItem = (LogItem)lbLog.Items[e.Index];
+			e.Graphics.DrawString(logItem.Text, lbLog.Font, logItem.Brush ?? defaultForegroundBrush, e.Bounds, StringFormat.GenericDefault);
 		}
 
 		private void UpdateClock()
 		{
-			while (_clock.IsRunning)
+			while (_clock.IsRunning && !IsDisposed)
 			{
 				rtbClock.BeginInvoke((Action)UpdateClockText);
 				Thread.Sleep(10);
@@ -73,14 +88,20 @@ namespace KeyInterceptor
 			using(var fontDialog = new FontDialog())
 			{
 				fontDialog.Font = lbLog.Font;
+				fontDialog.AllowVectorFonts = true;
+				fontDialog.AllowVerticalFonts = true;
 
-				if(DialogResult.OK == fontDialog.ShowDialog())
+				if (DialogResult.OK == fontDialog.ShowDialog())
 				{
 					lbLog.Font = rtbClock.Font = fontDialog.Font;
 					lbLog.Anchor ^= AnchorStyles.Bottom;
 					rtbClock.Height = lbLog.ItemHeight;
 					ClientSize = new Size(ClientSize.Width, lbLog.Height + lbLog.ItemHeight);
 					lbLog.Anchor |= AnchorStyles.Bottom;
+					UpdateLogItemHeight();
+					AlignLogClientSize();
+					AlignLogItems();
+					AlignLogClientSize();
 				}
 			}
 		}
@@ -88,6 +109,7 @@ namespace KeyInterceptor
 		private void ChangeFontColorToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			lbLog.ForeColor = rtbClock.ForeColor = PickColor(lbLog.ForeColor);
+			defaultForegroundBrush = new SolidBrush(rtbClock.ForeColor);
 		}
 
 		private Color PickColor(Color sourceColor)
@@ -110,16 +132,15 @@ namespace KeyInterceptor
 			BackColor = lbLog.BackColor = rtbClock.BackColor = PickColor(lbLog.BackColor);
 		}
 
-		public void Append(string log)
+		public void Append(ref LogItem logItem)
 		{
-			AlignLog(1);
-			lbLog.Items.Insert(lbLog.Items.Count, log);
+			AlignLogItems(1);
+			lbLog.Items.Insert(lbLog.Items.Count, logItem);
 		}
 
 		private void LogForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SaveSettings();
-			_clock?.Dispose();
 		}
 
 		private void SaveSettings()
@@ -142,6 +163,7 @@ namespace KeyInterceptor
 			{
 				var parts = File.ReadAllText("log_settings.txt").Split('|');
 				rtbClock.ForeColor = lbLog.ForeColor = Color.FromArgb(int.Parse(parts[0]));
+				defaultForegroundBrush = new SolidBrush(rtbClock.ForeColor);
 				BackColor = rtbClock.BackColor = lbLog.BackColor = Color.FromArgb(int.Parse(parts[1]));
 
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Font));
@@ -155,10 +177,10 @@ namespace KeyInterceptor
 
 		private void LogForm_Resize(object sender, EventArgs e)
 		{
-			AlignLog();
+			AlignLogItems();
 		}
 
-		private void AlignLog(int remainCount = 0)
+		private void AlignLogItems(int remainCount = 0)
 		{
 			while ((ClientSize.Height < (lbLog.Items.Count + 1 + remainCount) * lbLog.ItemHeight) && lbLog.Items.Count > 0)
 			{
@@ -168,9 +190,22 @@ namespace KeyInterceptor
 
 		private void LogForm_ResizeEnd(object sender, EventArgs e)
 		{
+			AlignLogClientSize();
+			lbLog.Invalidate();
+			lbLog.Update();
+		}
+
+		private void AlignLogClientSize()
+		{
 			lbLog.ClientSize = ClientSize;
 			var toCropY = ClientSize.Height % lbLog.ItemHeight;
 			ClientSize = new Size(ClientSize.Width, ClientSize.Height - toCropY);
+		}
+
+		private void UpdateLogItemHeight()
+		{
+			lbLog.ItemHeight = (int)Graphics.FromHwnd(lbLog.Handle).MeasureString("text", lbLog.Font, Screen.GetBounds(this).Width, StringFormat.GenericDefault).Height + 2;
+			rtbClock.Height = lbLog.ItemHeight;
 		}
 
 		private void SwitchTopMostToolStripMenuItem_Click(object sender, EventArgs e)
@@ -179,31 +214,6 @@ namespace KeyInterceptor
 			if(sender is ToolStripMenuItem menuItem)
 			{
 				menuItem.Checked = TopMost;
-			}
-		}
-
-		private class Clock: IDisposable
-		{
-			private DateTime _startTime;
-			private Stopwatch _stopwatch;
-
-			public bool IsRunning => _stopwatch.IsRunning;
-
-			public Clock()
-			{
-				_startTime = DateTime.Now;
-				_stopwatch = Stopwatch.StartNew();
-			}
-
-			public override string ToString()
-			{
-				DateTime time = _startTime.AddMilliseconds(_stopwatch.ElapsedMilliseconds);
-				return time.ToString(@"HH:mm:ss.ff");
-			}
-
-			public void Dispose()
-			{
-				_stopwatch.Stop();
 			}
 		}
 
