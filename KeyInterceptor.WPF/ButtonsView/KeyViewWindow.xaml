@@ -1,15 +1,19 @@
-﻿<Window x:Class="KeyInterceptor.WPF.MainWindow"
+﻿<Window x:Class="KeyInterceptor.WPF.ButtonsView.KeyViewWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:KeyInterceptor.WPF" xmlns:buttonsview="clr-namespace:KeyInterceptor.WPF.ButtonsView"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid>
         <DockPanel>
-            <Canvas x:Name="Canvas">
-                <buttonsview:KeyButton></buttonsview:KeyButton>
+            <Canvas x:Name="Canvas" Background="White">
+                <Canvas.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить..." Click="NewButtonView_Click"/>
+                    </ContextMenu>
+                </Canvas.ContextMenu>
             </Canvas>
         </DockPanel>
     </Grid>

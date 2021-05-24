@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace KeyInterceptor.WPF.Time
 {
-    class Clock: IDisposable
+    public class Clock: IDisposable
     {
         public DateTime Now => _startDateTime.AddTicks(_internalClock.ElapsedTicks);
 

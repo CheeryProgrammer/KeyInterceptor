@@ -60,22 +60,42 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ButtonsView\KeyButton.xaml.cs">
-      <DependentUpon>KeyButton.xaml</DependentUpon>
+    <Compile Include="ButtonsView\ButtonView.xaml.cs">
+      <DependentUpon>ButtonView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ButtonsView\ButtonViewModel.cs" />
+    <Compile Include="ButtonsView\KeyBindingEventArgs.cs" />
+    <Compile Include="ButtonsView\KeyBindingWindow.xaml.cs">
+      <DependentUpon>KeyBindingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="KeyInterception\ButtonsController.cs" />
+    <Compile Include="KeyInterception\ReactiveButton.cs" />
+    <Compile Include="KeyLog\KeyPressingTracker.cs" />
+    <Compile Include="KeyLog\KeyReleasedEventArgs.cs" />
+    <Compile Include="Settings\BrushHelper.cs" />
+    <Compile Include="Settings\ButtonLogViewSettings.cs" />
+    <Compile Include="Settings\ButtonViewOptions.cs" />
     <Compile Include="KeyLog\FontProperties.cs" />
     <Compile Include="KeyLog\FreePanelSpaceEventArgs.cs" />
     <Compile Include="KeyLog\ShrinkableStackPanel.cs" />
+    <Compile Include="Settings\ButtonViewSettings.cs" />
+    <Compile Include="Settings\LogEntryOptions.cs" />
+    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\StaticResources.cs" />
     <Compile Include="Time\Clock.cs" />
-    <Page Include="ButtonsView\KeyButton.xaml">
+    <Page Include="ButtonsView\ButtonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LogForm.xaml">
+    <Page Include="ButtonsView\KeyBindingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="KeyLog\LogViewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ButtonsView\KeyViewWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -84,12 +104,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ChangeFontCommand.cs" />
-    <Compile Include="LogForm.xaml.cs">
-      <DependentUpon>LogForm.xaml</DependentUpon>
+    <Compile Include="KeyLog\LogViewWindow.xaml.cs">
+      <DependentUpon>LogViewWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KeyLog\Model.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="KeyLog\LogViewModel.cs" />
+    <Compile Include="ButtonsView\KeyViewWindow.xaml.cs">
+      <DependentUpon>KeyViewWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -120,16 +140,14 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="KeyInterception\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Media\ActiveButtonDefault.bmp">
+    <Resource Include="Media\PressedButton.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Media\ButtonDefault.bmp">
+    <Resource Include="Media\ReleasedButton.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

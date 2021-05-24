@@ -1,0 +1,71 @@
+﻿<Window x:Class="KeyInterceptor.WPF.KeyLog.LogViewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KeyInterceptor.WPF.KeyLog"
+        mc:Ignorable="d"
+        Title="LogForm" Height="450" Width="800"
+        Loaded="Window_Loaded"
+        AllowsTransparency="False"
+        WindowStyle="SingleBorderWindow">
+    <!--<Window.Background>
+        <SolidColorBrush Opacity="0"/>
+    </Window.Background>-->
+    <Border BorderThickness="4" BorderBrush="Aqua">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Rectangle Grid.Row="0"
+                       Height="20"
+                       Fill="Aqua"
+                       VerticalAlignment="Top"/>
+            <DockPanel Grid.Row="1">
+                <ItemsControl DockPanel.Dock="Top"
+						  x:Name="tStack"
+						  Grid.Column="0"
+						  ItemsSource="{Binding Elements}"
+						  BorderThickness="0"
+						  Margin="0"
+						  Padding="0">
+                    <ItemsControl.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Шрифт..." Command="{Binding ChangeFontCommand}"/>
+                        </ContextMenu>
+                    </ItemsControl.ContextMenu>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <local:ShrinkableStackPanel Orientation="Vertical"
+                                                       Margin="0"
+                                                       Arranged="ShrinkableStackPanel_Overflew">
+                            </local:ShrinkableStackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border SnapsToDevicePixels="True">
+                                <TextBlock Text="{Binding Text}"
+								   FontSize="{Binding Path=DataContext.FontProperties.FontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:LogViewWindow}}}"
+								   FontFamily="{Binding Path=DataContext.FontProperties.FontFamily, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:LogViewWindow}}}"
+								   Foreground="{Binding Path=DataContext.FontProperties.FontColor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:LogViewWindow}}}"
+								   Background="{Binding BackColor}"
+								   Padding="5"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock DockPanel.Dock="Bottom"
+					   Text="{Binding Clock}"
+                       x:Name="Clock"
+					   FontSize="{Binding Path=DataContext.FontProperties.FontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:LogViewWindow}}}"
+					   FontFamily="{Binding Path=DataContext.FontProperties.FontFamily, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:LogViewWindow}}}"
+					   Foreground="{Binding Path=DataContext.FontProperties.FontColor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:LogViewWindow}}}"
+					   VerticalAlignment="Bottom"
+					   Padding="5">
+                </TextBlock>
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>
