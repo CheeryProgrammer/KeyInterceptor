@@ -60,7 +60,8 @@ namespace KeyInterceptor
 			MouseDown += ButtonView_MouseDown;
 			MouseMove += ButtonView_MouseMove;
 			MouseUp += Redraw;
-			UnPress(DateTime.MinValue);
+			//UnPress(DateTime.MinValue);
+			Image = _image;
 		}
 
 		private void Redraw(object sender, MouseEventArgs e)
@@ -140,7 +141,7 @@ namespace KeyInterceptor
 			_image = imagePath == null || !File.Exists(imagePath)
 				? Resources.ButtonDefault
 				: new Bitmap(imagePath);
-			UnPress(DateTime.MinValue);
+			//UnPress(DateTime.MinValue);
 		}
 
 		internal void SetActiveImage(string activeImagePath)

@@ -23,6 +23,17 @@ namespace KeyInterceptor
 
 		private IClock _clock;
 
+		private ToolStripMenuItem _transparencyMenu;
+		private bool _isTransparentBackground;
+		private Color _basicBackColor;
+		private Color BackgroundColor
+		{
+			get
+			{
+				return _isTransparentBackground ? this._basicBackColor : this.BackColor;
+			}
+		}
+
 		public KeyInterceptorForm()
 		{
 			InitializeComponent();
@@ -30,11 +41,13 @@ namespace KeyInterceptor
 
 		private void KeyInterceptorForm_Load(object sender, EventArgs e)
 		{
+			_transparencyMenu = this.contextMenu.Items[3] as ToolStripMenuItem;
 			_clock = new Clock();
 
 			_logForm = new LogForm(_clock);
+            _logForm.Show();
 
-			try
+            try
 			{
 				LoadButtons();
 			}
@@ -44,11 +57,11 @@ namespace KeyInterceptor
 					$"Файл настроек будет удален", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
+			this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			LoadFormSettings();
 
 			Subscribe();
-			_logForm.Show();
-		}
+        }
 
 		private void LoadButtons()
 		{
@@ -84,7 +97,7 @@ namespace KeyInterceptor
 
 			_logForm.BeginInvoke((Action)(()=>
 			{
-				var logItem = new LogItem
+				var logItem = new LogEntry
 				{
 					Brush = e.Brush,
 					Text = $"{e.PressedTimestamp:HH:mm:ss.fff} {_keyMap.Map(e.KeyCode.ToString())} {Math.Round(e.Duration)} ms"
@@ -128,7 +141,12 @@ namespace KeyInterceptor
 			}
 		}
 
-		private void NoBordersToolStripMenuItem_Click(object sender, EventArgs e)
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            base.OnPaintBackground(e);
+        }
+
+        private void NoBordersToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
 			if (menuItem.Checked)
@@ -258,9 +276,10 @@ namespace KeyInterceptor
 			string posY = Location.Y.ToString();
 			string width = Width.ToString();
 			string height = Height.ToString();
-			string backColor = BackColor.ToArgb().ToString();
+			string backColor = BackgroundColor.ToArgb().ToString();
 			string topMost = TopMost.ToString();
-			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}|{backColor}|{topMost}");
+			bool setTransparency = _isTransparentBackground;
+			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}|{backColor}|{topMost}|{setTransparency}");
 		}
 
 		private void LoadFormSettings()
@@ -271,12 +290,33 @@ namespace KeyInterceptor
 				Location = new Point(int.Parse(parts[0]), int.Parse(parts[1]));
 				Width = int.Parse(parts[2]);
 				Height = int.Parse(parts[3]);
-				BackColor = Color.FromArgb(int.Parse(parts[4]));
+				_basicBackColor = Color.FromArgb(int.Parse(parts[4]));
 				TopMost = bool.Parse(parts[5]);
+				SetTransparency(bool.Parse(parts[6]));
 			}
 		}
 
-		private void ShowLogToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SetTransparency(bool isTransparentBackground)
+        {
+            if(_isTransparentBackground == isTransparentBackground)
+			{
+				return;
+			}
+			if (_isTransparentBackground)
+			{
+				_isTransparentBackground = false;
+				TransparencyKey = Color.Empty;
+				BackColor = _basicBackColor;
+			}
+			else
+			{
+				_isTransparentBackground = true;
+				this.TransparencyKey = this.BackColor = Color.Red;
+			}
+			_transparencyMenu.Checked = _isTransparentBackground;
+        }
+
+        private void ShowLogToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			_logForm.Dispose();
 			_logForm = new LogForm(_clock);
@@ -285,7 +325,7 @@ namespace KeyInterceptor
 
 		private void ChangeBackColorToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			BackColor = PickColor(BackColor);
+			_basicBackColor = PickColor(BackColor);
 		}
 
 		private Color PickColor(Color sourceColor)
@@ -311,5 +351,10 @@ namespace KeyInterceptor
 				menuItem.Checked = TopMost;
 			}
 		}
-	}
+
+        private void SetTransparentBackgroundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+			SetTransparency(!_isTransparentBackground);
+        }
+    }
 }
