@@ -32,9 +32,10 @@ namespace KeyInterceptor
         protected override void OnPaint(PaintEventArgs e)
         {
             using (var sf = new StringFormat())
-            using (var br = new SolidBrush(Color.LightBlue))
+            using (var br = new SolidBrush(ForeColor))
             using (GraphicsPath path = new GraphicsPath())
             {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 path.AddString(Text, Font.FontFamily, (int)Font.Style, Font.Height, new Point(0, (int)(_padding*0.75)), sf);
                 e.Graphics.FillPath(br, path);
             }

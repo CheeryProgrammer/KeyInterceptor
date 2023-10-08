@@ -24,15 +24,7 @@ namespace KeyInterceptor
 		private IClock _clock;
 
 		private ToolStripMenuItem _transparencyMenu;
-		private bool _isTransparentBackground;
-		private Color _basicBackColor;
-		private Color BackgroundColor
-		{
-			get
-			{
-				return _isTransparentBackground ? this._basicBackColor : this.BackColor;
-			}
-		}
+		private FormBackgroundColorizer _backgroundColorizer;
 
 		public KeyInterceptorForm()
 		{
@@ -42,6 +34,7 @@ namespace KeyInterceptor
 		private void KeyInterceptorForm_Load(object sender, EventArgs e)
 		{
 			_transparencyMenu = this.contextMenu.Items[3] as ToolStripMenuItem;
+			_backgroundColorizer = new FormBackgroundColorizer(this);
 			_clock = new Clock();
 
 			_logForm = new LogForm(_clock);
@@ -57,7 +50,6 @@ namespace KeyInterceptor
 					$"Файл настроек будет удален", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
-			this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			LoadFormSettings();
 
 			Subscribe();
@@ -276,9 +268,9 @@ namespace KeyInterceptor
 			string posY = Location.Y.ToString();
 			string width = Width.ToString();
 			string height = Height.ToString();
-			string backColor = BackgroundColor.ToArgb().ToString();
+			string backColor = _backgroundColorizer.BackgroundColor.ToArgb().ToString();
 			string topMost = TopMost.ToString();
-			bool setTransparency = _isTransparentBackground;
+			bool setTransparency = _backgroundColorizer.IsTransparent;
 			File.WriteAllText("main_settings.txt", $"{posX}|{posY}|{width}|{height}|{backColor}|{topMost}|{setTransparency}");
 		}
 
@@ -290,31 +282,12 @@ namespace KeyInterceptor
 				Location = new Point(int.Parse(parts[0]), int.Parse(parts[1]));
 				Width = int.Parse(parts[2]);
 				Height = int.Parse(parts[3]);
-				_basicBackColor = Color.FromArgb(int.Parse(parts[4]));
+				_backgroundColorizer.SetColor(Color.FromArgb(int.Parse(parts[4])));
 				TopMost = bool.Parse(parts[5]);
-				SetTransparency(bool.Parse(parts[6]));
+				_backgroundColorizer.SetTransparency(bool.Parse(parts[6]));
+				_transparencyMenu.Checked = _backgroundColorizer.IsTransparent;
 			}
 		}
-
-        private void SetTransparency(bool isTransparentBackground)
-        {
-            if(_isTransparentBackground == isTransparentBackground)
-			{
-				return;
-			}
-			if (_isTransparentBackground)
-			{
-				_isTransparentBackground = false;
-				TransparencyKey = Color.Empty;
-				BackColor = _basicBackColor;
-			}
-			else
-			{
-				_isTransparentBackground = true;
-				this.TransparencyKey = this.BackColor = Color.Red;
-			}
-			_transparencyMenu.Checked = _isTransparentBackground;
-        }
 
         private void ShowLogToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -325,7 +298,7 @@ namespace KeyInterceptor
 
 		private void ChangeBackColorToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			_basicBackColor = PickColor(BackColor);
+			_backgroundColorizer.SetColor(PickColor(BackColor));
 		}
 
 		private Color PickColor(Color sourceColor)
@@ -354,7 +327,8 @@ namespace KeyInterceptor
 
         private void SetTransparentBackgroundToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			SetTransparency(!_isTransparentBackground);
+			_backgroundColorizer.SetTransparency(!_backgroundColorizer.IsTransparent);
+			_transparencyMenu.Checked = _backgroundColorizer.IsTransparent;
         }
     }
 }

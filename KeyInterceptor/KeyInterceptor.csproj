@@ -57,6 +57,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Clock.cs" />
+    <Compile Include="FormBackgroundColorizer.cs" />
     <Compile Include="KeyBindingForm.cs">
       <SubType>Form</SubType>
     </Compile>

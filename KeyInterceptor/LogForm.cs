@@ -12,18 +12,9 @@ namespace KeyInterceptor
     {
         private IClock _clock;
         private Label invisibleLabelForFocus;
-        private Brush defaultForegroundBrush;
 
         private ToolStripMenuItem _transparencyMenu;
-        private bool _isTransparentBackground;
-        private Color _basicBackColor;
-        private Color BackgroundColor
-        {
-            get
-            {
-                return _isTransparentBackground ? this._basicBackColor : this.BackColor;
-            }
-        }
+        private FormBackgroundColorizer _backgroundColorizer;
 
         public LogForm(IClock clock)
         {
@@ -34,6 +25,8 @@ namespace KeyInterceptor
         private void LogForm_Load(object sender, EventArgs e)
         {
             _transparencyMenu = this.contextMenuLog.Items[3] as ToolStripMenuItem;
+            _backgroundColorizer = new FormBackgroundColorizer(this);
+
             LoadSettings();
 
             Task.Factory.StartNew(UpdateClock, TaskCreationOptions.LongRunning);
@@ -44,12 +37,6 @@ namespace KeyInterceptor
             this.Controls.Add(invisibleLabelForFocus);
 
             logPanel1.MouseClick += LbLog_MouseClick;
-
-            //UpdateLogItemHeight();
-            //AlignLogClientSize();
-            //AlignLogItems();
-            //this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            //this.TransparencyKey = this.BackColor = Color.Blue;
         }
 
         private void UpdateClock()
@@ -92,10 +79,6 @@ namespace KeyInterceptor
 
                 if (DialogResult.OK == fontDialog.ShowDialog())
                 {
-                    //UpdateLogItemHeight();
-                    //AlignLogClientSize();
-                    //AlignLogItems();
-                    //AlignLogClientSize();
                     logPanel1.SetFont(fontDialog.Font);
                 }
             }
@@ -104,7 +87,6 @@ namespace KeyInterceptor
         private void ChangeFontColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             logPanel1.ForeColor = PickColor(logPanel1.ForeColor);
-            defaultForegroundBrush = new SolidBrush(logPanel1.ForeColor);
         }
 
         private Color PickColor(Color sourceColor)
@@ -141,7 +123,7 @@ namespace KeyInterceptor
         private void SaveSettings()
         {
             string fontColor = logPanel1.ForeColor.ToArgb().ToString();
-            string backColor = BackgroundColor.ToArgb().ToString();
+            string backColor = _backgroundColorizer.BackgroundColor.ToArgb().ToString();
             TypeConverter converter = TypeDescriptor.GetConverter(typeof(Font));
             string font = converter.ConvertToInvariantString(logPanel1.Font);
             string posX = Location.X.ToString();
@@ -149,7 +131,7 @@ namespace KeyInterceptor
             string width = Width.ToString();
             string height = Height.ToString();
             string topMost = TopMost.ToString();
-            bool setTransparency = _isTransparentBackground;
+            bool setTransparency = _backgroundColorizer.IsTransparent;
             File.WriteAllText("log_settings.txt", $"{fontColor}|{backColor}|{font}|{posX}|{posY}|{width}|{height}|{topMost}|{setTransparency}");
         }
 
@@ -159,8 +141,7 @@ namespace KeyInterceptor
             {
                 var parts = File.ReadAllText("log_settings.txt").Split('|');
                 logPanel1.ForeColor = Color.FromArgb(int.Parse(parts[0]));
-                defaultForegroundBrush = new SolidBrush(logPanel1.ForeColor);
-                _basicBackColor = Color.FromArgb(int.Parse(parts[1]));
+                _backgroundColorizer.SetColor(Color.FromArgb(int.Parse(parts[1])));
 
                 TypeConverter converter = TypeDescriptor.GetConverter(typeof(Font));
                 logPanel1.SetFont((Font)converter.ConvertFromInvariantString(parts[2]));
@@ -168,11 +149,8 @@ namespace KeyInterceptor
                 Width = int.Parse(parts[5]);
                 Height = int.Parse(parts[6]);
                 TopMost = bool.Parse(parts[7]);
-                SetTransparency(bool.Parse(parts[8]));
-            }
-            else
-            {
-                defaultForegroundBrush = Brushes.Black;
+                _backgroundColorizer.SetTransparency(bool.Parse(parts[8]));
+                _transparencyMenu.Checked = _backgroundColorizer.IsTransparent;
             }
         }
 
@@ -247,30 +225,8 @@ namespace KeyInterceptor
 
         private void SetTransparentBackgroundToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SetTransparency(!_isTransparentBackground);
-        }
-
-        private void SetTransparency(bool isTransparentBackground)
-        {
-            if (_isTransparentBackground == isTransparentBackground)
-            {
-                return;
-            }
-            if (_isTransparentBackground)
-            {
-                _isTransparentBackground = false;
-                TransparencyKey = Color.Empty;
-                //BackColor = rtbClock.BackColor = lbLog.BackColor = _basicBackColor;
-            }
-            else
-            {
-                _isTransparentBackground = true;
-                this.TransparencyKey = this.BackColor = Color.Red;
-                //lbLog.BackColor = Color.Transparent;
-                //rtbClock.BackColor = Color.Transparent;
-                
-            }
-            _transparencyMenu.Checked = _isTransparentBackground;
+            _backgroundColorizer.SetTransparency(!_backgroundColorizer.IsTransparent);
+            _transparencyMenu.Checked = _backgroundColorizer.IsTransparent;
         }
     }
 }
